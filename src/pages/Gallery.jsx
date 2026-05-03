@@ -12,12 +12,13 @@ export default function Gallery() {
   const [max, setMax] = useState(10)
   const [viewer, setViewer] = useState(null)
 
+  // swipe
+  const [touchStartX, setTouchStartX] = useState(0)
+
   useEffect(() => {
     fetch(`${API}/project/${code}`)
       .then(res => res.json())
       .then(data => {
-        console.log("DATA:", data)
-
         setPhotos(data.photos || [])
         setAdminWA(data.admin_whatsapp || "")
         setClientName(data.name || "")
@@ -25,6 +26,7 @@ export default function Gallery() {
       })
   }, [code])
 
+  // toggle select
   const toggle = (p) => {
     if (!selected.includes(p) && selected.length >= max) {
       return alert("Limit foto tercapai")
@@ -37,6 +39,7 @@ export default function Gallery() {
     )
   }
 
+  // WA sender
   const sendWA = () => {
     if (selected.length === 0) {
       return alert("Pilih foto dulu")
@@ -61,6 +64,30 @@ export default function Gallery() {
 
     const url = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`
     window.open(url, "_blank")
+  }
+
+  // swipe start
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX)
+  }
+
+  // swipe end
+  const handleTouchEnd = () => {
+    if (!viewer) return
+
+    const currentIndex = photos.findIndex(p => p.url === viewer.url)
+    const touchEndX = event.changedTouches[0].clientX
+    const diff = touchStartX - touchEndX
+
+    // swipe left → next
+    if (diff > 50 && currentIndex < photos.length - 1) {
+      setViewer(photos[currentIndex + 1])
+    }
+
+    // swipe right → prev
+    if (diff < -50 && currentIndex > 0) {
+      setViewer(photos[currentIndex - 1])
+    }
   }
 
   return (
@@ -94,7 +121,7 @@ export default function Gallery() {
         {photos.map((p, i) => (
           <div key={i} style={{ position: "relative" }}>
 
-            {/* CHECKBOX */}
+            {/* checkbox */}
             <div
               onClick={() => toggle(p)}
               style={{
@@ -111,7 +138,7 @@ export default function Gallery() {
               }}
             />
 
-            {/* IMAGE */}
+            {/* image */}
             <img
               src={p.url}
               loading="lazy"
@@ -130,8 +157,7 @@ export default function Gallery() {
                   ? "3px solid #2563eb"
                   : "1px solid #ddd",
                 borderRadius: 8,
-                backgroundColor: "#f3f4f6",
-                transition: "0.2s"
+                backgroundColor: "#f3f4f6"
               }}
             />
 
@@ -139,10 +165,12 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* ZOOM VIEWER */}
+      {/* VIEWER (ZOOM + SWIPE) */}
       {viewer && (
         <div
           onClick={() => setViewer(null)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
           style={{
             position: "fixed",
             top: 0,
