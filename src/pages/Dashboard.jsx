@@ -4,14 +4,14 @@ import { API } from "../config"
 export default function Dashboard() {
   const [name, setName] = useState("")
   const [wa, setWa] = useState("")
-  const [maxPhotos, setMaxPhotos] = useState("") // kosong default
+  const [maxPhotos, setMaxPhotos] = useState("") // ❌ no default 10
   const [driveLink, setDriveLink] = useState("")
   const [link, setLink] = useState("")
   const [loading, setLoading] = useState(false)
 
   const create = async () => {
-    if (!name || !wa) {
-      return alert("Isi nama client & WhatsApp dulu")
+    if (!name || !wa || !maxPhotos) {
+      return alert("Isi semua field dulu")
     }
 
     try {
@@ -25,7 +25,7 @@ export default function Dashboard() {
         body: JSON.stringify({
           name,
           admin_whatsapp: wa,
-          max_photos: maxPhotos
+          max_photos: maxPhotos,
           drive_link: driveLink
         })
       })
@@ -84,16 +84,16 @@ export default function Dashboard() {
           style={inputStyle}
         />
 
-        {/* MAX PHOTOS (EMPTY DEFAULT) */}
+        {/* MAX PHOTOS (NO DEFAULT) */}
         <input
           type="number"
-          placeholder="Max pilihan foto (default 10)"
+          placeholder="Max pilihan foto"
           value={maxPhotos}
           onChange={(e) => setMaxPhotos(e.target.value)}
           style={inputStyle}
         />
 
-        {/* DRIVE */}
+        {/* DRIVE LINK */}
         <input
           placeholder="Link Google Drive folder"
           onChange={(e) => setDriveLink(e.target.value)}
@@ -119,7 +119,7 @@ export default function Dashboard() {
           {loading ? "Creating..." : "Generate project link"}
         </button>
 
-        {/* RESULT LINK */}
+        {/* RESULT */}
         {link && (
           <div style={{ marginTop: 15, wordBreak: "break-all" }}>
             <p style={{ fontWeight: "bold" }}>Gallery Link:</p>
@@ -133,7 +133,7 @@ export default function Dashboard() {
   )
 }
 
-// STYLE BIAR RAPIH
+// INPUT STYLE
 const inputStyle = {
   width: "100%",
   padding: 10,
