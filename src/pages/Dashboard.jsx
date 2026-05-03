@@ -4,14 +4,14 @@ import { API } from "../config"
 export default function Dashboard() {
   const [name, setName] = useState("")
   const [wa, setWa] = useState("")
-  const [maxPhotos, setMaxPhotos] = useState(10)
+  const [maxPhotos, setMaxPhotos] = useState("") // kosong default
   const [driveLink, setDriveLink] = useState("")
   const [link, setLink] = useState("")
   const [loading, setLoading] = useState(false)
 
   const create = async () => {
     if (!name || !wa) {
-      return alert("Isi semua field dulu")
+      return alert("Isi nama client & WhatsApp dulu")
     }
 
     try {
@@ -25,7 +25,7 @@ export default function Dashboard() {
         body: JSON.stringify({
           name,
           admin_whatsapp: wa,
-          max_photos: maxPhotos,
+          max_photos: maxPhotos || 10,
           drive_link: driveLink
         })
       })
@@ -47,47 +47,98 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>DASHBOARD</h1>
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "#f3f4f6"
+      }}
+    >
+      {/* CARD */}
+      <div
+        style={{
+          width: 380,
+          padding: 25,
+          background: "white",
+          borderRadius: 12,
+          boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
+        }}
+      >
+        <h2 style={{ textAlign: "center", marginBottom: 20 }}>
+          DASHBOARD
+        </h2>
 
-      <input
-        placeholder="Nama client"
-        onChange={(e) => setName(e.target.value)}
-      />
-      <br />
+        {/* NAME */}
+        <input
+          placeholder="Nama client"
+          onChange={(e) => setName(e.target.value)}
+          style={inputStyle}
+        />
 
-      <input
-        placeholder="WhatsApp admin"
-        onChange={(e) => setWa(e.target.value)}
-      />
-      <br />
+        {/* WA */}
+        <input
+          placeholder="WhatsApp admin"
+          onChange={(e) => setWa(e.target.value)}
+          style={inputStyle}
+        />
 
-      <input
-        type="number"
-        placeholder="Max pilihan foto"
-        value={maxPhotos}
-        onChange={(e) => setMaxPhotos(e.target.value)}
-      />
-      <br />
+        {/* MAX PHOTOS (EMPTY DEFAULT) */}
+        <input
+          type="number"
+          placeholder="Max pilihan foto (default 10)"
+          value={maxPhotos}
+          onChange={(e) => setMaxPhotos(e.target.value)}
+          style={inputStyle}
+        />
 
-      <input
-        placeholder="Link Google Drive folder"
-        onChange={(e) => setDriveLink(e.target.value)}
-      />
-      <br />
+        {/* DRIVE */}
+        <input
+          placeholder="Link Google Drive folder"
+          onChange={(e) => setDriveLink(e.target.value)}
+          style={inputStyle}
+        />
 
-      <button onClick={create} disabled={loading}>
-        {loading ? "Creating..." : "Generate project link"}
-      </button>
+        {/* BUTTON */}
+        <button
+          onClick={create}
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: 10,
+            background: "#22c55e",
+            color: "white",
+            border: "none",
+            borderRadius: 8,
+            cursor: "pointer",
+            fontWeight: "bold",
+            marginTop: 10
+          }}
+        >
+          {loading ? "Creating..." : "Generate project link"}
+        </button>
 
-      {link && (
-        <div style={{ marginTop: 15 }}>
-          <p>Link Gallery:</p>
-          <a href={link} target="_blank" rel="noreferrer">
-            {link}
-          </a>
-        </div>
-      )}
+        {/* RESULT LINK */}
+        {link && (
+          <div style={{ marginTop: 15, wordBreak: "break-all" }}>
+            <p style={{ fontWeight: "bold" }}>Gallery Link:</p>
+            <a href={link} target="_blank" rel="noreferrer">
+              {link}
+            </a>
+          </div>
+        )}
+      </div>
     </div>
   )
+}
+
+// STYLE BIAR RAPIH
+const inputStyle = {
+  width: "100%",
+  padding: 10,
+  marginBottom: 10,
+  borderRadius: 8,
+  border: "1px solid #ddd",
+  outline: "none"
 }
