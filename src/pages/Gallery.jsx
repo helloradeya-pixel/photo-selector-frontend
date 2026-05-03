@@ -37,28 +37,19 @@ export default function Gallery() {
     )
   }
 
-  // WHATSAPP SEND
+  // SEND WA
   const sendWA = () => {
-    if (selected.length === 0) {
-      return alert("Pilih foto dulu")
-    }
+    if (selected.length === 0) return alert("Pilih foto dulu")
 
     const msg =
       `📸 Client: ${clientName}\n\n` +
       `Selected Photos:\n` +
-      selected
-        .map((p, i) => `${i + 1}. ${p.name || p.url}`)
-        .join("\n")
+      selected.map((p, i) => `${i + 1}. ${p.name || p.url}`).join("\n")
 
     let number = adminWA.replace(/[^0-9]/g, "")
 
-    if (number.startsWith("0")) {
-      number = "62" + number.slice(1)
-    }
-
-    if (!number.startsWith("62")) {
-      number = "62" + number
-    }
+    if (number.startsWith("0")) number = "62" + number.slice(1)
+    if (!number.startsWith("62")) number = "62" + number
 
     const url = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`
     window.open(url, "_blank")
@@ -69,9 +60,7 @@ export default function Gallery() {
 
       <h1>📸 PickMe Gallery</h1>
 
-      <p>
-        Selected: {selected.length} / {max}
-      </p>
+      <p>Selected: {selected.length} / {max}</p>
 
       <button
         onClick={sendWA}
@@ -117,11 +106,6 @@ export default function Gallery() {
               src={p.url}
               loading="lazy"
               onClick={() => setViewerIndex(i)}
-              onError={(e) => {
-                e.currentTarget.onerror = null
-                e.currentTarget.src =
-                  "https://placehold.co/400x400?text=No+Image"
-              }}
               style={{
                 width: "100%",
                 height: 200,
@@ -139,55 +123,51 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* VIEWER (GOOGLE DRIVE STYLE CLEAN) */}
+      {/* FULLSCREEN VIEWER */}
       {viewerIndex !== null && (
         <div
-          onClick={() => setViewerIndex(null)}
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.95)",
+            inset: 0,
+            backgroundColor: "black",
+            zIndex: 9999,
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-            cursor: "zoom-out"
+            alignItems: "center"
           }}
         >
 
-          {/* COUNTER */}
-          <div
+          {/* CLOSE BUTTON (TOP LEFT) */}
+          <button
+            onClick={() => setViewerIndex(null)}
             style={{
               position: "absolute",
               top: 15,
-              color: "#fff",
-              fontSize: 14,
-              background: "rgba(0,0,0,0.4)",
-              padding: "5px 10px",
+              left: 15,
+              background: "rgba(255,255,255,0.1)",
+              border: "none",
+              color: "white",
+              fontSize: 16,
+              padding: "6px 10px",
               borderRadius: 6,
-              backdropFilter: "blur(4px)"
+              cursor: "pointer",
+              zIndex: 10
             }}
           >
-            {viewerIndex + 1} / {photos.length}
-          </div>
+            ✕
+          </button>
 
-          {/* LEFT BUTTON */}
+          {/* LEFT NAV */}
           {viewerIndex > 0 && (
             <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setViewerIndex(viewerIndex - 1)
-              }}
+              onClick={() => setViewerIndex(viewerIndex - 1)}
               style={{
                 position: "absolute",
-                left: 15,
-                background: "rgba(255,255,255,0.08)",
-                border: "none",
+                left: 20,
                 color: "white",
-                fontSize: 24,
+                fontSize: 30,
+                background: "rgba(255,255,255,0.1)",
+                border: "none",
                 padding: "10px 14px",
                 borderRadius: 10,
                 cursor: "pointer"
@@ -197,20 +177,17 @@ export default function Gallery() {
             </button>
           )}
 
-          {/* RIGHT BUTTON */}
+          {/* RIGHT NAV */}
           {viewerIndex < photos.length - 1 && (
             <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setViewerIndex(viewerIndex + 1)
-              }}
+              onClick={() => setViewerIndex(viewerIndex + 1)}
               style={{
                 position: "absolute",
-                right: 15,
-                background: "rgba(255,255,255,0.08)",
-                border: "none",
+                right: 20,
                 color: "white",
-                fontSize: 24,
+                fontSize: 30,
+                background: "rgba(255,255,255,0.1)",
+                border: "none",
                 padding: "10px 14px",
                 borderRadius: 10,
                 cursor: "pointer"
@@ -220,17 +197,14 @@ export default function Gallery() {
             </button>
           )}
 
-          {/* IMAGE */}
+          {/* FULL IMAGE (BACKGROUND FEEL) */}
           <img
             src={photos[viewerIndex].url}
             style={{
-              maxWidth: "92%",
-              maxHeight: "92%",
-              objectFit: "contain",
-              borderRadius: 10,
-              boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
+              width: "100vw",
+              height: "100vh",
+              objectFit: "contain"
             }}
-            onClick={(e) => e.stopPropagation()}
           />
 
         </div>
