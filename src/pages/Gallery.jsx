@@ -10,9 +10,8 @@ export default function Gallery() {
   const [adminWA, setAdminWA] = useState("")
   const [clientName, setClientName] = useState("")
   const [max, setMax] = useState(10)
-  const [viewer, setViewer] = useState(null)
 
-  // swipe
+  const [viewerIndex, setViewerIndex] = useState(null)
   const [touchStartX, setTouchStartX] = useState(0)
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function Gallery() {
       })
   }, [code])
 
-  // toggle select
+  // SELECT TOGGLE
   const toggle = (p) => {
     if (!selected.includes(p) && selected.length >= max) {
       return alert("Limit foto tercapai")
@@ -39,7 +38,7 @@ export default function Gallery() {
     )
   }
 
-  // WA sender
+  // WHATSAPP SEND
   const sendWA = () => {
     if (selected.length === 0) {
       return alert("Pilih foto dulu")
@@ -66,27 +65,24 @@ export default function Gallery() {
     window.open(url, "_blank")
   }
 
-  // swipe start
+  // SWIPE START
   const handleTouchStart = (e) => {
     setTouchStartX(e.touches[0].clientX)
   }
 
-  // swipe end
-  const handleTouchEnd = () => {
-    if (!viewer) return
+  // SWIPE END
+  const handleTouchEnd = (e) => {
+    if (viewerIndex === null) return
 
-    const currentIndex = photos.findIndex(p => p.url === viewer.url)
-    const touchEndX = event.changedTouches[0].clientX
-    const diff = touchStartX - touchEndX
+    const endX = e.changedTouches[0].clientX
+    const diff = touchStartX - endX
 
-    // swipe left → next
-    if (diff > 50 && currentIndex < photos.length - 1) {
-      setViewer(photos[currentIndex + 1])
+    if (diff > 50 && viewerIndex < photos.length - 1) {
+      setViewerIndex(viewerIndex + 1)
     }
 
-    // swipe right → prev
-    if (diff < -50 && currentIndex > 0) {
-      setViewer(photos[currentIndex - 1])
+    if (diff < -50 && viewerIndex > 0) {
+      setViewerIndex(viewerIndex - 1)
     }
   }
 
@@ -121,7 +117,7 @@ export default function Gallery() {
         {photos.map((p, i) => (
           <div key={i} style={{ position: "relative" }}>
 
-            {/* checkbox */}
+            {/* CHECKBOX */}
             <div
               onClick={() => toggle(p)}
               style={{
@@ -138,11 +134,11 @@ export default function Gallery() {
               }}
             />
 
-            {/* image */}
+            {/* IMAGE */}
             <img
               src={p.url}
               loading="lazy"
-              onClick={() => setViewer(p)}
+              onClick={() => setViewerIndex(i)}
               onError={(e) => {
                 e.currentTarget.onerror = null
                 e.currentTarget.src =
@@ -153,9 +149,11 @@ export default function Gallery() {
                 height: 200,
                 objectFit: "cover",
                 cursor: "pointer",
-                border: selected.includes(p)
-                  ? "3px solid #2563eb"
-                  : "1px solid #ddd",
+                border: viewerIndex === i
+                  ? "3px solid #22c55e"
+                  : selected.includes(p)
+                    ? "3px solid #2563eb"
+                    : "1px solid #ddd",
                 borderRadius: 8,
                 backgroundColor: "#f3f4f6"
               }}
@@ -165,10 +163,10 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* VIEWER (ZOOM + SWIPE) */}
-      {viewer && (
+      {/* VIEWER */}
+      {viewerIndex !== null && (
         <div
-          onClick={() => setViewer(null)}
+          onClick={() => setViewerIndex(null)}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           style={{
@@ -177,15 +175,46 @@ export default function Gallery() {
             left: 0,
             width: "100vw",
             height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.9)",
+            backgroundColor: "rgba(0,0,0,0.95)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            zIndex: 9999
+            zIndex: 9999,
+            cursor: "zoom-out"
           }}
         >
+
+          {/* POSITION INDICATOR */}
+          <div
+            style={{
+              position: "absolute",
+              top: 20,
+              color: "white",
+              fontSize: 16,
+              background: "rgba(0,0,0,0.5)",
+              padding: "6px 12px",
+              borderRadius: 8
+            }}
+          >
+            {viewerIndex + 1} / {photos.length}
+          </div>
+
+          {/* SWIPE HINT */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 20,
+              color: "white",
+              fontSize: 12,
+              opacity: 0.7
+            }}
+          >
+            ← swipe kiri / kanan →
+          </div>
+
+          {/* IMAGE */}
           <img
-            src={viewer.url}
+            src={photos[viewerIndex].url}
             style={{
               maxWidth: "90%",
               maxHeight: "90%",
@@ -194,6 +223,7 @@ export default function Gallery() {
             }}
             onClick={(e) => e.stopPropagation()}
           />
+
         </div>
       )}
 
