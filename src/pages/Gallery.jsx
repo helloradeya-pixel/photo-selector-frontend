@@ -37,7 +37,7 @@ export default function Gallery() {
     )
   }
 
-  // KIRIM WA
+  // WHATSAPP SEND
   const sendWA = () => {
     if (selected.length === 0) {
       return alert("Pilih foto dulu")
@@ -139,7 +139,7 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* VIEWER (ZOOM + BUTTON NAVIGATION) */}
+      {/* VIEWER (GOOGLE DRIVE STYLE CLEAN) */}
       {viewerIndex !== null && (
         <div
           onClick={() => setViewerIndex(null)}
@@ -162,67 +162,73 @@ export default function Gallery() {
           <div
             style={{
               position: "absolute",
-              top: 20,
-              color: "white",
-              fontSize: 16,
-              background: "rgba(0,0,0,0.5)",
-              padding: "6px 12px",
-              borderRadius: 8
+              top: 15,
+              color: "#fff",
+              fontSize: 14,
+              background: "rgba(0,0,0,0.4)",
+              padding: "5px 10px",
+              borderRadius: 6,
+              backdropFilter: "blur(4px)"
             }}
           >
             {viewerIndex + 1} / {photos.length}
           </div>
 
           {/* LEFT BUTTON */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              if (viewerIndex > 0) setViewerIndex(viewerIndex - 1)
-            }}
-            style={{
-              position: "absolute",
-              left: 20,
-              fontSize: 30,
-              background: "rgba(255,255,255,0.1)",
-              border: "none",
-              color: "white",
-              padding: "10px 15px",
-              borderRadius: 10,
-              cursor: "pointer"
-            }}
-          >
-            ←
-          </button>
+          {viewerIndex > 0 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setViewerIndex(viewerIndex - 1)
+              }}
+              style={{
+                position: "absolute",
+                left: 15,
+                background: "rgba(255,255,255,0.08)",
+                border: "none",
+                color: "white",
+                fontSize: 24,
+                padding: "10px 14px",
+                borderRadius: 10,
+                cursor: "pointer"
+              }}
+            >
+              ‹
+            </button>
+          )}
 
           {/* RIGHT BUTTON */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              if (viewerIndex < photos.length - 1) setViewerIndex(viewerIndex + 1)
-            }}
-            style={{
-              position: "absolute",
-              right: 20,
-              fontSize: 30,
-              background: "rgba(255,255,255,0.1)",
-              border: "none",
-              color: "white",
-              padding: "10px 15px",
-              borderRadius: 10,
-              cursor: "pointer"
-            }}
-          >
-            →
-          </button>
+          {viewerIndex < photos.length - 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setViewerIndex(viewerIndex + 1)
+              }}
+              style={{
+                position: "absolute",
+                right: 15,
+                background: "rgba(255,255,255,0.08)",
+                border: "none",
+                color: "white",
+                fontSize: 24,
+                padding: "10px 14px",
+                borderRadius: 10,
+                cursor: "pointer"
+              }}
+            >
+              ›
+            </button>
+          )}
 
           {/* IMAGE */}
           <img
             src={photos[viewerIndex].url}
             style={{
-              maxWidth: "90%",
-              maxHeight: "90%",
+              maxWidth: "92%",
+              maxHeight: "92%",
               objectFit: "contain",
-              borderRadius: 10
+              borderRadius: 10,
+              boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
             }}
             onClick={(e) => e.stopPropagation()}
           />
