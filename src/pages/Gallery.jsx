@@ -87,8 +87,12 @@ export default function Gallery() {
             loading="lazy"
             onClick={() => toggle(p)}
             onError={(e) => {
-              e.target.src =
-                "https://via.placeholder.com/400?text=No+Image"
+              // ❗ penting: cegah infinite loop
+              e.currentTarget.onerror = null
+
+              // fallback aman (gak ke-block)
+              e.currentTarget.src =
+                "https://placehold.co/400x400?text=No+Image"
             }}
             style={{
               width: "100%",
@@ -96,10 +100,11 @@ export default function Gallery() {
               objectFit: "cover",
               cursor: "pointer",
               border: selected.includes(p)
-                ? "3px solid blue"
+                ? "3px solid #2563eb"
                 : "1px solid #ddd",
-              borderRadius: 6,
-              backgroundColor: "#f0f0f0"
+              borderRadius: 8,
+              backgroundColor: "#f3f4f6",
+              transition: "0.2s"
             }}
           />
         ))}
