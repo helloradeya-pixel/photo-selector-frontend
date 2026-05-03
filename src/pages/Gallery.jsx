@@ -58,25 +58,38 @@ export default function Gallery() {
     <div style={{ padding: 20 }}>
       <h1>PickMe Gallery</h1>
 
-      <p>
+      <p style={{ marginBottom: 10 }}>
         Selected: {selected.length} / {max}
       </p>
 
-      <button onClick={sendWA}>
+      <button
+        onClick={sendWA}
+        style={{
+          padding: "10px 15px",
+          marginBottom: 20,
+          cursor: "pointer"
+        }}
+      >
         Kirim ke WhatsApp Admin
       </button>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gap: 10,
-        marginTop: 20
-      }}>
-        {photos.map((p) => (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 10
+        }}
+      >
+        {photos.map((p, i) => (
           <img
-            key={p.id}
+            key={i}
             src={p.url}
+            loading="lazy"
             onClick={() => toggle(p)}
+            onError={(e) => {
+              e.target.src =
+                "https://via.placeholder.com/400?text=No+Image"
+            }}
             style={{
               width: "100%",
               height: 200,
@@ -84,7 +97,9 @@ export default function Gallery() {
               cursor: "pointer",
               border: selected.includes(p)
                 ? "3px solid blue"
-                : "1px solid #ddd"
+                : "1px solid #ddd",
+              borderRadius: 6,
+              backgroundColor: "#f0f0f0"
             }}
           />
         ))}
