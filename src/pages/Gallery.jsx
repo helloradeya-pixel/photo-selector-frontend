@@ -12,7 +12,6 @@ export default function Gallery() {
   const [max, setMax] = useState(10)
 
   const [viewerIndex, setViewerIndex] = useState(null)
-  const [touchStartX, setTouchStartX] = useState(0)
 
   useEffect(() => {
     fetch(`${API}/project/${code}`)
@@ -25,7 +24,7 @@ export default function Gallery() {
       })
   }, [code])
 
-  // SELECT TOGGLE
+  // SELECT FOTO
   const toggle = (p) => {
     if (!selected.includes(p) && selected.length >= max) {
       return alert("Limit foto tercapai")
@@ -38,7 +37,7 @@ export default function Gallery() {
     )
   }
 
-  // WHATSAPP SEND
+  // KIRIM WA
   const sendWA = () => {
     if (selected.length === 0) {
       return alert("Pilih foto dulu")
@@ -63,27 +62,6 @@ export default function Gallery() {
 
     const url = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`
     window.open(url, "_blank")
-  }
-
-  // SWIPE START
-  const handleTouchStart = (e) => {
-    setTouchStartX(e.touches[0].clientX)
-  }
-
-  // SWIPE END
-  const handleTouchEnd = (e) => {
-    if (viewerIndex === null) return
-
-    const endX = e.changedTouches[0].clientX
-    const diff = touchStartX - endX
-
-    if (diff > 50 && viewerIndex < photos.length - 1) {
-      setViewerIndex(viewerIndex + 1)
-    }
-
-    if (diff < -50 && viewerIndex > 0) {
-      setViewerIndex(viewerIndex - 1)
-    }
   }
 
   return (
@@ -149,11 +127,9 @@ export default function Gallery() {
                 height: 200,
                 objectFit: "cover",
                 cursor: "pointer",
-                border: viewerIndex === i
-                  ? "3px solid #22c55e"
-                  : selected.includes(p)
-                    ? "3px solid #2563eb"
-                    : "1px solid #ddd",
+                border: selected.includes(p)
+                  ? "3px solid #2563eb"
+                  : "1px solid #ddd",
                 borderRadius: 8,
                 backgroundColor: "#f3f4f6"
               }}
@@ -163,12 +139,10 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* VIEWER */}
+      {/* VIEWER (ZOOM + BUTTON NAVIGATION) */}
       {viewerIndex !== null && (
         <div
           onClick={() => setViewerIndex(null)}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
           style={{
             position: "fixed",
             top: 0,
@@ -184,7 +158,7 @@ export default function Gallery() {
           }}
         >
 
-          {/* POSITION INDICATOR */}
+          {/* COUNTER */}
           <div
             style={{
               position: "absolute",
@@ -199,18 +173,47 @@ export default function Gallery() {
             {viewerIndex + 1} / {photos.length}
           </div>
 
-          {/* SWIPE HINT */}
-          <div
+          {/* LEFT BUTTON */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              if (viewerIndex > 0) setViewerIndex(viewerIndex - 1)
+            }}
             style={{
               position: "absolute",
-              bottom: 20,
+              left: 20,
+              fontSize: 30,
+              background: "rgba(255,255,255,0.1)",
+              border: "none",
               color: "white",
-              fontSize: 12,
-              opacity: 0.7
+              padding: "10px 15px",
+              borderRadius: 10,
+              cursor: "pointer"
             }}
           >
-            ← swipe kiri / kanan →
-          </div>
+            ←
+          </button>
+
+          {/* RIGHT BUTTON */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              if (viewerIndex < photos.length - 1) setViewerIndex(viewerIndex + 1)
+            }}
+            style={{
+              position: "absolute",
+              right: 20,
+              fontSize: 30,
+              background: "rgba(255,255,255,0.1)",
+              border: "none",
+              color: "white",
+              padding: "10px 15px",
+              borderRadius: 10,
+              cursor: "pointer"
+            }}
+          >
+            →
+          </button>
 
           {/* IMAGE */}
           <img
