@@ -25,7 +25,7 @@ export default function Dashboard() {
         body: JSON.stringify({
           name,
           admin_whatsapp: wa,
-          max_photos: maxPhotos ||
+          max_photos: maxPhotos
           drive_link: driveLink
         })
       })
