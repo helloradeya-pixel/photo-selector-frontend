@@ -54,7 +54,7 @@ export default function Gallery() {
         {photos.map((p, i) => (
           <div key={i} style={{ position: "relative" }}>
 
-            {/* GREEN CHECKBOX */}
+            {/* GREEN CHECKBOX GRID */}
             <div
               onClick={() => toggle(p)}
               style={{
@@ -72,7 +72,8 @@ export default function Gallery() {
                 alignItems: "center",
                 justifyContent: "center",
                 color: selected.includes(p) ? "white" : "#22c55e",
-                fontSize: 14
+                fontSize: 14,
+                fontWeight: "bold"
               }}
             >
               {selected.includes(p) ? "✓" : ""}
@@ -132,36 +133,36 @@ export default function Gallery() {
             ✕
           </button>
 
-          {/* DOWNLOAD (CENTER TOP) */}
-          <button
-            onClick={() => {
-              const url = photos[viewerIndex].url
-              const link = document.createElement("a")
-              link.href = url
-              link.download = `photo-${viewerIndex + 1}.jpg`
-              document.body.appendChild(link)
-              link.click()
-              document.body.removeChild(link)
+          {/* SELECT TOGGLE (FULLSCREEN) */}
+          <div
+            onClick={(e) => {
+              e.stopPropagation()
+              toggle(photos[viewerIndex])
             }}
             style={{
               position: "absolute",
               top: 15,
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "#22c55e",
-              border: "none",
-              color: "white",
-              padding: "6px 14px",
-              borderRadius: 8,
+              right: 15,
+              width: 28,
+              height: 28,
+              backgroundColor: selected.includes(photos[viewerIndex])
+                ? "#22c55e"
+                : "white",
+              border: "2px solid #22c55e",
+              borderRadius: 6,
               cursor: "pointer",
-              fontWeight: "bold",
-              zIndex: 10
+              zIndex: 10,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: selected.includes(photos[viewerIndex]) ? "white" : "#22c55e",
+              fontWeight: "bold"
             }}
           >
-            ⬇ Download
-          </button>
+            {selected.includes(photos[viewerIndex]) ? "✓" : ""}
+          </div>
 
-          {/* LEFT */}
+          {/* PREV */}
           {viewerIndex > 0 && (
             <button
               onClick={() => setViewerIndex(viewerIndex - 1)}
@@ -181,7 +182,7 @@ export default function Gallery() {
             </button>
           )}
 
-          {/* RIGHT */}
+          {/* NEXT */}
           {viewerIndex < photos.length - 1 && (
             <button
               onClick={() => setViewerIndex(viewerIndex + 1)}
