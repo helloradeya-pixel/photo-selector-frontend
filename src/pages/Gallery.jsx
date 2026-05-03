@@ -15,6 +15,9 @@ export default function Gallery() {
     fetch(`${API}/project/${code}`)
       .then(res => res.json())
       .then(data => {
+        console.log("DATA:", data)
+        console.log("PHOTOS:", data.photos)
+
         setPhotos(data.photos || [])
         setAdminWA(data.admin_whatsapp || "")
         setClientName(data.name || "")
@@ -42,13 +45,8 @@ export default function Gallery() {
 
     let number = adminWA.replace(/[^0-9]/g, "")
 
-    if (number.startsWith("0")) {
-      number = "62" + number.slice(1)
-    }
-
-    if (!number.startsWith("62")) {
-      number = "62" + number
-    }
+    if (number.startsWith("0")) number = "62" + number.slice(1)
+    if (!number.startsWith("62")) number = "62" + number
 
     const url = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`
     window.open(url, "_blank")
@@ -58,18 +56,11 @@ export default function Gallery() {
     <div style={{ padding: 20 }}>
       <h1>PickMe Gallery</h1>
 
-      <p style={{ marginBottom: 10 }}>
+      <p>
         Selected: {selected.length} / {max}
       </p>
 
-      <button
-        onClick={sendWA}
-        style={{
-          padding: "10px 15px",
-          marginBottom: 20,
-          cursor: "pointer"
-        }}
-      >
+      <button onClick={sendWA} style={{ marginBottom: 20 }}>
         Kirim ke WhatsApp Admin
       </button>
 
@@ -87,10 +78,7 @@ export default function Gallery() {
             loading="lazy"
             onClick={() => toggle(p)}
             onError={(e) => {
-              // ❗ penting: cegah infinite loop
               e.currentTarget.onerror = null
-
-              // fallback aman (gak ke-block)
               e.currentTarget.src =
                 "https://placehold.co/400x400?text=No+Image"
             }}
@@ -102,9 +90,7 @@ export default function Gallery() {
               border: selected.includes(p)
                 ? "3px solid #2563eb"
                 : "1px solid #ddd",
-              borderRadius: 8,
-              backgroundColor: "#f3f4f6",
-              transition: "0.2s"
+              borderRadius: 8
             }}
           />
         ))}
