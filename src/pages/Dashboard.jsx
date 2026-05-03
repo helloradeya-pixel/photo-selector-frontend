@@ -4,6 +4,8 @@ import { API } from "../config"
 export default function Dashboard() {
   const [name, setName] = useState("")
   const [wa, setWa] = useState("")
+  const [maxPhotos, setMaxPhotos] = useState(10)
+  const [driveLink, setDriveLink] = useState("")
   const [link, setLink] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -22,7 +24,9 @@ export default function Dashboard() {
         },
         body: JSON.stringify({
           name,
-          admin_whatsapp: wa
+          admin_whatsapp: wa,
+          max_photos: maxPhotos,
+          drive_link: driveLink
         })
       })
 
@@ -55,6 +59,20 @@ export default function Dashboard() {
       <input
         placeholder="WhatsApp admin"
         onChange={(e) => setWa(e.target.value)}
+      />
+      <br />
+
+      <input
+        type="number"
+        placeholder="Max pilihan foto"
+        value={maxPhotos}
+        onChange={(e) => setMaxPhotos(e.target.value)}
+      />
+      <br />
+
+      <input
+        placeholder="Link Google Drive folder"
+        onChange={(e) => setDriveLink(e.target.value)}
       />
       <br />
 
