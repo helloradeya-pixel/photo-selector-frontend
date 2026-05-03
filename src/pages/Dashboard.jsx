@@ -5,6 +5,7 @@ export default function Dashboard() {
   const [name, setName] = useState("")
   const [wa, setWa] = useState("")
   const [link, setLink] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const create = async () => {
     if (!name || !wa) {
@@ -12,13 +13,16 @@ export default function Dashboard() {
     }
 
     try {
+      setLoading(true)
+
       const res = await fetch(`${API}/create-project`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           name,
-          admin_whatsapp: wa,
-          max_selection: 10
+          admin_whatsapp: wa
         })
       })
 
@@ -33,6 +37,8 @@ export default function Dashboard() {
     } catch (err) {
       console.log(err)
       alert("Backend tidak konek / CORS error")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -52,37 +58,18 @@ export default function Dashboard() {
       />
       <br />
 
-      <button onClick={create}>Generate project link</button>
+      <button onClick={create} disabled={loading}>
+        {loading ? "Creating..." : "Generate project link"}
+      </button>
 
       {link && (
         <div style={{ marginTop: 15 }}>
           <p>Link Gallery:</p>
-          <a href={link} target="_blank">
+          <a href={link} target="_blank" rel="noreferrer">
             {link}
           </a>
         </div>
       )}
     </div>
   )
-}
-
-
-const create = async () => {
-  const res = await fetch(`${API}/create-project`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name,
-      admin_whatsapp: wa
-    })
-  })
-
-  const data = await res.json()
-
-  if (!res.ok) {
-    return alert(data.error || "Gagal")
-  }
-
-  alert("Project dibuat!")
-  console.log(data.link)
 }
