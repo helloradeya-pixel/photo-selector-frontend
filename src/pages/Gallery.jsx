@@ -10,13 +10,13 @@ export default function Gallery() {
   const [adminWA, setAdminWA] = useState("")
   const [clientName, setClientName] = useState("")
   const [max, setMax] = useState(10)
+  const [viewer, setViewer] = useState(null)
 
   useEffect(() => {
     fetch(`${API}/project/${code}`)
       .then(res => res.json())
       .then(data => {
         console.log("DATA:", data)
-        console.log("PHOTOS:", data.photos)
 
         setPhotos(data.photos || [])
         setAdminWA(data.admin_whatsapp || "")
@@ -37,7 +37,6 @@ export default function Gallery() {
     )
   }
 
-  // ✅ FIX DI SINI (PAKAI NAME)
   const sendWA = () => {
     if (selected.length === 0) {
       return alert("Pilih foto dulu")
@@ -66,9 +65,10 @@ export default function Gallery() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>PickMe Gallery</h1>
 
-      <p style={{ marginBottom: 10 }}>
+      <h1>📸 PickMe Gallery</h1>
+
+      <p>
         Selected: {selected.length} / {max}
       </p>
 
@@ -83,6 +83,7 @@ export default function Gallery() {
         Kirim ke WhatsApp Admin
       </button>
 
+      {/* GRID */}
       <div
         style={{
           display: "grid",
@@ -91,31 +92,83 @@ export default function Gallery() {
         }}
       >
         {photos.map((p, i) => (
-          <img
-            key={i}
-            src={p.url}
-            loading="lazy"
-            onClick={() => toggle(p)}
-            onError={(e) => {
-              e.currentTarget.onerror = null
-              e.currentTarget.src =
-                "https://placehold.co/400x400?text=No+Image"
-            }}
-            style={{
-              width: "100%",
-              height: 200,
-              objectFit: "cover",
-              cursor: "pointer",
-              border: selected.includes(p)
-                ? "3px solid #2563eb"
-                : "1px solid #ddd",
-              borderRadius: 8,
-              backgroundColor: "#f3f4f6",
-              transition: "0.2s"
-            }}
-          />
+          <div key={i} style={{ position: "relative" }}>
+
+            {/* CHECKBOX */}
+            <div
+              onClick={() => toggle(p)}
+              style={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                zIndex: 2,
+                width: 20,
+                height: 20,
+                backgroundColor: selected.includes(p) ? "#2563eb" : "white",
+                border: "2px solid #2563eb",
+                borderRadius: 4,
+                cursor: "pointer"
+              }}
+            />
+
+            {/* IMAGE */}
+            <img
+              src={p.url}
+              loading="lazy"
+              onClick={() => setViewer(p)}
+              onError={(e) => {
+                e.currentTarget.onerror = null
+                e.currentTarget.src =
+                  "https://placehold.co/400x400?text=No+Image"
+              }}
+              style={{
+                width: "100%",
+                height: 200,
+                objectFit: "cover",
+                cursor: "pointer",
+                border: selected.includes(p)
+                  ? "3px solid #2563eb"
+                  : "1px solid #ddd",
+                borderRadius: 8,
+                backgroundColor: "#f3f4f6",
+                transition: "0.2s"
+              }}
+            />
+
+          </div>
         ))}
       </div>
+
+      {/* ZOOM VIEWER */}
+      {viewer && (
+        <div
+          onClick={() => setViewer(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.9)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999
+          }}
+        >
+          <img
+            src={viewer.url}
+            style={{
+              maxWidth: "90%",
+              maxHeight: "90%",
+              objectFit: "contain",
+              borderRadius: 10
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
     </div>
   )
 }
