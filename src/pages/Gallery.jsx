@@ -37,16 +37,28 @@ export default function Gallery() {
     )
   }
 
+  // ✅ FIX DI SINI (PAKAI NAME)
   const sendWA = () => {
+    if (selected.length === 0) {
+      return alert("Pilih foto dulu")
+    }
+
     const msg =
       `📸 Client: ${clientName}\n\n` +
       `Selected Photos:\n` +
-      selected.map((p, i) => `${i + 1}. ${p.full || p.url}`).join("\n")
+      selected
+        .map((p, i) => `${i + 1}. ${p.name || p.url}`)
+        .join("\n")
 
     let number = adminWA.replace(/[^0-9]/g, "")
 
-    if (number.startsWith("0")) number = "62" + number.slice(1)
-    if (!number.startsWith("62")) number = "62" + number
+    if (number.startsWith("0")) {
+      number = "62" + number.slice(1)
+    }
+
+    if (!number.startsWith("62")) {
+      number = "62" + number
+    }
 
     const url = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`
     window.open(url, "_blank")
@@ -56,11 +68,18 @@ export default function Gallery() {
     <div style={{ padding: 20 }}>
       <h1>PickMe Gallery</h1>
 
-      <p>
+      <p style={{ marginBottom: 10 }}>
         Selected: {selected.length} / {max}
       </p>
 
-      <button onClick={sendWA} style={{ marginBottom: 20 }}>
+      <button
+        onClick={sendWA}
+        style={{
+          padding: "10px 15px",
+          marginBottom: 20,
+          cursor: "pointer"
+        }}
+      >
         Kirim ke WhatsApp Admin
       </button>
 
@@ -90,7 +109,9 @@ export default function Gallery() {
               border: selected.includes(p)
                 ? "3px solid #2563eb"
                 : "1px solid #ddd",
-              borderRadius: 8
+              borderRadius: 8,
+              backgroundColor: "#f3f4f6",
+              transition: "0.2s"
             }}
           />
         ))}
