@@ -59,7 +59,7 @@ export default function Gallery() {
   return (
     <div style={{ padding: 20 }}>
 
-      <h1>📸 PickMe Gallery</h1>
+      <h1>📸 Radeya Gallery</h1>
 
       <p style={{ marginBottom: 10 }}>
         Selected: {selected.length} / {max}
